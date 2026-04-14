@@ -18,7 +18,7 @@ export const registerSchema = z
       .max(20, 'Password must be at most 20 characters long')
       .regex(/[A-Za-z]/, 'Password must contain at least one letter')
       .regex(/\d/, 'Password must contain at least one number'),
-    repassword: z.string().min(8).max(20),
+    repassword: z.string(),
   })
   .refine((data) => data.password === data.repassword, {
     error: 'Passwords do not match',

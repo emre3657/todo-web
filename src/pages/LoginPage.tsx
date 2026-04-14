@@ -1,3 +1,112 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Link } from 'react-router';
+import { ApiError } from '@/lib/api-client';
+import type { LoginInput } from '@/features/auth/schemas';
+import { useLogin } from '@/features/auth/hooks';
+import { loginSchema } from '@/features/auth/schemas';
+
 export function LoginPage() {
-  return <div>LoginPage</div>;
+  const [globalError, setGlobalError] = useState<string | null>(null);
+  const login = useLogin();
+
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = async (data: LoginInput) => {
+    setGlobalError(null);
+
+    try {
+      await login.mutateAsync(data);
+    } catch (error: unknown) {
+      if (!(error instanceof ApiError)) {
+        setGlobalError('An unexpected error occurred. Please try again later.');
+        return;
+      }
+      const responseData = error.response.data;
+
+      if (responseData?.code === 'VALIDATION_ERROR' && Array.isArray(responseData.errors)) {
+        responseData.errors.forEach((fieldError: { field: string; message: string }) => {
+          if (fieldError.field) {
+            setError(fieldError.field as "username" | "password", { type: 'server', message: fieldError.message });
+          }
+        });
+        return;
+      }
+
+      if (responseData?.code === 'UNAUTHENTICATED') {
+        setGlobalError('Invalid username or password.');
+        return;
+      }
+      setGlobalError('An unexpected error occurred. Please try again later.');
+    }
+  };
+
+  return (
+    <div className="h-full min-h-full flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+        <h1 className="text-2xl font-semibold mb-6">Log In</h1>
+
+        {globalError && (
+          <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {globalError}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+              Username
+            </label>
+            <input
+              id="username"
+              type="text"
+              {...register('username')}
+              className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+            />
+            {errors.username && (
+              <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
+            )}
+          </div>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              id="password"
+              type="password"
+              {...register('password')}
+              className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+            />
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={login.isPending}
+            className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {login.isPending ? 'Submitting...' : 'Log In'}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
+            Register
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 }
