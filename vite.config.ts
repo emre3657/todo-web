@@ -14,13 +14,6 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  server: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:3000/api/v1"
-      }
-    }
-  },
   build: {
     target: "./src",
     outDir: "./dist"
