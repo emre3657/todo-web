@@ -1,5 +1,7 @@
 import { createBrowserRouter } from 'react-router';
-import { LandingPage } from '@/pages/LandingPage';
+import { LandingRoute } from '@/app/routes/LandingRoute';
+import { PublicOnlyRoute } from '@/app/routes/PublicOnlyRoute';
+import { ProtectedRoute } from '@/app/routes/ProtectedRoute';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { TodosPage } from '@/pages/TodosPage';
@@ -8,22 +10,32 @@ import { ProfilePage } from '@/pages/ProfilePage';
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <LandingPage />,
+    element: <LandingRoute />,
   },
   {
-    path: '/login',
-    element: <LoginPage />,
+    element: <PublicOnlyRoute />,
+    children: [
+      {
+        path: '/login',
+        element: <LoginPage />,
+      },
+      {
+        path: '/register',
+        element: <RegisterPage />,
+      },
+    ],
   },
   {
-    path: '/register',
-    element: <RegisterPage />,
-  },
-  {
-    path: '/todos',
-    element: <TodosPage />,
-  },
-  {
-    path: '/profile',
-    element: <ProfilePage />,
+    element: <ProtectedRoute />,
+    children: [
+      {
+        path: '/todos',
+        element: <TodosPage />,
+      },
+      {
+        path: '/profile',
+        element: <ProfilePage />,
+      },
+    ],
   },
 ]);
