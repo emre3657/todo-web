@@ -16,6 +16,10 @@ function buildQueryParams(params: GetTodosQuery) {
     searchParams.set('search', params.search);
   }
 
+  if (params.status) {
+    searchParams.set('status', params.status);
+  }
+
   if (params.sort) {
     searchParams.set('sort', params.sort);
   }
@@ -40,17 +44,22 @@ function buildQueryParams(params: GetTodosQuery) {
 }
 
 export const todosApi = {
-  getTodos: (params?: GetTodosQuery): Promise<Todo[]> => {
+  getTodos: async (params?: GetTodosQuery): Promise<{ todos: Todo[]; total: number; page: number; limit: number }> => {
     const query = params ? buildQueryParams(params) : '';
     const path = query ? `/todos?${query}` : '/todos';
-    return apiClient.get(path);
+    const response = await apiClient.get<{ todos: Todo[]; total: number; page: number; limit: number }>(path);
+    return response;
   },
 
-  createTodo: (data: CreateTodoInput): Promise<Todo> =>
-    apiClient.post('/todos', data),
+  createTodo: async (data: CreateTodoInput): Promise<Todo> => {
+    const response = await apiClient.post<{ todo: Todo }>('/todos', data);
+    return response.todo;
+  },
 
-  updateTodo: (id: string, data: UpdateTodoInput): Promise<Todo> =>
-    apiClient.patch(`/todos/${id}`, data),
+  updateTodo: async (id: string, data: UpdateTodoInput): Promise<Todo> => {
+    const response = await apiClient.patch<{ todo: Todo }>(`/todos/${id}`, data);
+    return response.todo;
+  },
 
   deleteTodo: (id: string): Promise<void> =>
     apiClient.delete(`/todos/${id}`),

@@ -22,3 +22,17 @@ export type GetTodosQuery = GetTodosQuerySchemaInput;
 export type CreateTodoInput = CreateTodoSchemaInput;
 export type UpdateTodoInput = UpdateTodoSchemaInput;
 export type TodoPriorityInput = TodoPrioritySchemaInput;
+
+export interface TodoFormInput {
+  title: string;
+  description?: string;
+  dueDate?: string;
+  priority: TodoPriorityInput;
+}
+
+export interface TodosResponse {
+  todos: Todo[];
+  total: number;
+  page: number;
+  limit: number;
+}

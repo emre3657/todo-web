@@ -12,8 +12,24 @@ export const createTodoSchema = z.object({
     .optional()
     .transform((val) => (val === '' ? undefined : val)),
   priority: todoPrioritySchema.optional().default('MEDIUM'),
-  dueDate: z.coerce.date().optional(),
+  dueDate: z
+    .string()
+    .trim()
+    .optional()
+    .transform((val) => {
+      if (!val) {
+        return undefined;
+      }
+      return new Date(val);
+    })
+    .refine(
+      (val) => val === undefined || !Number.isNaN(val.getTime()),
+      {
+        message: 'Invalid due date',
+      },
+    ),
 });
+
 
 // Update todo schema
 export const updateTodoSchema = z
@@ -58,6 +74,9 @@ export const getTodosQuerySchema = z.object({
     .trim()
     .optional()
     .transform((val) => (val === '' ? undefined : val)),
+  status: z
+    .enum(['completed_on_time', 'completed_late', 'overdue'])
+    .optional(),
   sort: z
     .string()
     .trim()
@@ -67,9 +86,17 @@ export const getTodosQuerySchema = z.object({
   dueAfter: z.coerce.date().optional(),
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().min(1).max(100).default(10),
-});
+}).refine(
+  (data) =>
+    !data.dueBefore || !data.dueAfter || data.dueAfter <= data.dueBefore,
+  {
+    message: 'Due after must be earlier than or equal to due before',
+    path: ['dueAfter'],
+  }
+);
 
 export type CreateTodoInput = z.infer<typeof createTodoSchema>;
 export type UpdateTodoInput = z.infer<typeof updateTodoSchema>;
 export type GetTodosQuery = z.infer<typeof getTodosQuerySchema>;
 export type TodoPriorityInput = z.infer<typeof todoPrioritySchema>;
+export type TodoFormValues = z.input<typeof createTodoSchema>;
