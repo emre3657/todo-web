@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import { ApiError } from '@/lib/api-client';
 import type { LoginInput } from '@/features/auth/schemas';
 import { useLogin } from '@/features/auth/hooks';
@@ -10,6 +10,23 @@ import { loginSchema } from '@/features/auth/schemas';
 export function LoginPage() {
   const [globalError, setGlobalError] = useState<string | null>(null);
   const login = useLogin();
+  const location = useLocation();
+
+
+  const routeReason =
+    location.state &&
+    typeof location.state === 'object' &&
+    'reason' in location.state &&
+    (location.state.reason === 'session-expired' || location.state.reason === 'auth-required')
+      ? location.state.reason
+      : null;
+
+  const authMessage =
+    routeReason === 'session-expired'
+      ? 'Your session has expired. Please log in again.'
+      : routeReason === 'auth-required'
+      ? 'Please log in to continue.'
+      : null;
 
   const {
     register,
@@ -30,12 +47,16 @@ export function LoginPage() {
         setGlobalError('An unexpected error occurred. Please try again later.');
         return;
       }
+
       const responseData = error.response.data;
 
       if (responseData?.code === 'VALIDATION_ERROR' && Array.isArray(responseData.errors)) {
         responseData.errors.forEach((fieldError: { field: string; message: string }) => {
           if (fieldError.field) {
-            setError(fieldError.field as "username" | "password", { type: 'server', message: fieldError.message });
+            setError(fieldError.field as 'username' | 'password', {
+              type: 'server',
+              message: fieldError.message,
+            });
           }
         });
         return;
@@ -45,6 +66,7 @@ export function LoginPage() {
         setGlobalError('Invalid username or password.');
         return;
       }
+
       setGlobalError('An unexpected error occurred. Please try again later.');
     }
   };
@@ -53,6 +75,12 @@ export function LoginPage() {
     <div className="h-full min-h-full flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <h1 className="text-2xl font-semibold mb-6">Log In</h1>
+
+        {authMessage && !globalError && (
+          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            {authMessage}
+          </div>
+        )}  
 
         {globalError && (
           <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -69,6 +97,7 @@ export function LoginPage() {
               id="username"
               type="text"
               {...register('username')}
+              autoComplete='username'
               className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
             {errors.username && (
@@ -84,6 +113,7 @@ export function LoginPage() {
               id="password"
               type="password"
               {...register('password')}
+              autoComplete='current-password'
               className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
             {errors.password && (
@@ -94,7 +124,7 @@ export function LoginPage() {
           <button
             type="submit"
             disabled={login.isPending}
-            className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            className="cursor-pointer w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {login.isPending ? 'Submitting...' : 'Log In'}
           </button>
