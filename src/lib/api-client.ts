@@ -5,7 +5,7 @@ export interface ApiErrorResponse {
   message: string;
   code: string;
   errors?: Array<{
-    field: string
+    field: string;
     message: string;
   }>;
 }
@@ -23,11 +23,29 @@ export class ApiError extends Error {
   }
 }
 
+type RequestOptions = RequestInit & {
+  _retry?: boolean;
+};
+
+type RefreshResponse = {
+  accessToken: string;
+  user: {
+    id: string;
+    username: string;
+  };
+};
+
 class ApiClient {
   private accessToken: string | null = null;
+  private refreshPromise: Promise<string | null> | null = null;
+  private onUnauthorized: (() => void) | null = null;
 
   setAccessToken(token: string | null) {
     this.accessToken = token;
+  }
+
+  setUnauthorizedHandler(handler: (() => void) | null) {
+    this.onUnauthorized = handler;
   }
 
   private getHeaders(): Record<string, string> {
@@ -42,7 +60,50 @@ class ApiClient {
     return headers;
   }
 
-  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+  private async parseResponse<T>(response: Response): Promise<T> {
+    const text = await response.text();
+    return (text ? JSON.parse(text) : null) as T;
+  }
+
+  private async refreshAccessToken(): Promise<string | null> {
+    if (this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.refreshPromise = (async () => {
+      try {
+        const response = await fetch(`${API_URL}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        });
+
+        const data = await this.parseResponse<RefreshResponse | ApiErrorResponse | null>(response);
+
+        if (!response.ok) {
+          this.accessToken = null;
+          return null;
+        }
+
+        const refreshData = data as RefreshResponse;
+        this.accessToken = refreshData.accessToken;
+
+        return refreshData.accessToken;
+      } catch {
+        this.accessToken = null;
+        return null;
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
+  }
+
+  private async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     const url = `${API_URL}${endpoint}`;
 
     const response = await fetch(url, {
@@ -54,14 +115,34 @@ class ApiClient {
       ...options,
     });
 
-    const text = await response.text();
-    const data = text ? JSON.parse(text) : null;
+    const data = await this.parseResponse<ApiErrorResponse | T>(response);
 
-    if (!response.ok) {
-      throw new ApiError(data?.message || `HTTP ${response.status} ${response.statusText}`, response.status, data);
+    if (response.ok) {
+      return data as T;
     }
 
-    return data;
+    const isUnauthorized = response.status === 401;
+    const isRefreshRequest = endpoint === '/auth/refresh';
+
+    if (isUnauthorized && !options._retry && !isRefreshRequest) {
+      const newAccessToken = await this.refreshAccessToken();
+
+      if (newAccessToken) {
+        return this.request<T>(endpoint, {
+          ...options,
+          _retry: true,
+        });
+      }
+
+      this.accessToken = null;
+      this.onUnauthorized?.();
+    }
+
+    throw new ApiError(
+      (data as ApiErrorResponse | null)?.message || `HTTP ${response.status} ${response.statusText}`,
+      response.status,
+      (data as ApiErrorResponse | null) ?? null,
+    );
   }
 
   get<T>(endpoint: string): Promise<T> {
