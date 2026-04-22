@@ -10,12 +10,10 @@ export interface AuthResponse {
   accessToken: string;
 }
 
-export interface RefreshResponse {
-  accessToken: string;
-}
 
 export type RegisterResponse = AuthResponse;
 export type LoginResponse = AuthResponse;
+export type RefreshResponse = AuthResponse;
 export type LogoutResponse = void;
 export type LogoutAllResponse = void;
 

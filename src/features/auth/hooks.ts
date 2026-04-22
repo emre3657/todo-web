@@ -8,16 +8,19 @@ import type {
   RegisterResponse,
 } from './types';
 import { apiClient } from '@/lib/api-client';
+import { useAuth } from './auth-context';
 
 export const useRegister = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { setAuthUser } = useAuth();
 
   return useMutation<RegisterResponse, Error, AuthRegisterInput>({
     mutationFn: (data) => authApi.register(data),
     onSuccess: (data) => {
       apiClient.setAccessToken(data.accessToken);
       queryClient.setQueryData(['auth-user'], data.user);
+      setAuthUser(data.user);
       navigate('/todos');
     },
   });
@@ -26,40 +29,40 @@ export const useRegister = () => {
 export const useLogin = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { setAuthUser } = useAuth();
 
   return useMutation<LoginResponse, Error, AuthLoginInput>({
     mutationFn: (data) => authApi.login(data),
     onSuccess: (data) => {
       apiClient.setAccessToken(data.accessToken);
       queryClient.setQueryData(['auth-user'], data.user);
+      setAuthUser(data.user);
       navigate('/todos');
     },
   });
 };
 
 export const useLogout = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { clearAuth } = useAuth();
 
   return useMutation<void, Error, void>({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
-      apiClient.setAccessToken(null);
-      queryClient.clear();
+      clearAuth();
       navigate('/login');
     },
   });
 };
 
 export const useLogoutAll = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { clearAuth } = useAuth();
 
   return useMutation<void, Error, void>({
     mutationFn: () => authApi.logoutAll(),
     onSuccess: () => {
-      apiClient.setAccessToken(null);
-      queryClient.clear();
+      clearAuth();
       navigate('/login');
     },
   });
