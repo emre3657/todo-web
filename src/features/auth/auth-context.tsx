@@ -15,9 +15,21 @@ interface AuthContextValue {
   isAuthInitialized: boolean;
   isAuthenticated: boolean;
   user: User | null;
-  authReason: 'auth-required' | 'session-expired' | null;
+  authReason:
+  | 'auth-required'
+  | 'session-expired'
+  | 'logged-out'
+  | 'logged-out-all'
+  | null;
   setAuthUser: (user: User | null) => void;
-  clearAuth: (reason?: 'auth-required' | 'session-expired' | null) => void;
+  clearAuth: (
+    reason?:
+      | 'auth-required'
+      | 'session-expired'
+      | 'logged-out'
+      | 'logged-out-all'
+      | null
+  ) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -26,7 +38,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [authReason, setAuthReason] = useState<'auth-required' | 'session-expired' | null>(null);
+  const [authReason, setAuthReason] = useState<
+    'auth-required' | 'session-expired' | 'logged-out' | 'logged-out-all' | null
+  >(null);
 
   useEffect(() => {
     let isMounted = true;

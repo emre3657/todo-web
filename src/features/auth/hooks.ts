@@ -43,27 +43,23 @@ export const useLogin = () => {
 };
 
 export const useLogout = () => {
-  const navigate = useNavigate();
   const { clearAuth } = useAuth();
 
   return useMutation<void, Error, void>({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
-      clearAuth();
-      navigate('/login');
+      clearAuth("logged-out");
     },
   });
 };
 
 export const useLogoutAll = () => {
-  const navigate = useNavigate();
   const { clearAuth } = useAuth();
 
   return useMutation<void, Error, void>({
     mutationFn: () => authApi.logoutAll(),
     onSuccess: () => {
-      clearAuth();
-      navigate('/login');
+      clearAuth("logged-out-all");
     },
   });
 };

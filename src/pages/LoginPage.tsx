@@ -12,21 +12,42 @@ export function LoginPage() {
   const login = useLogin();
   const location = useLocation();
 
-
   const routeReason =
     location.state &&
     typeof location.state === 'object' &&
     'reason' in location.state &&
-    (location.state.reason === 'session-expired' || location.state.reason === 'auth-required')
+    (
+      location.state.reason === 'session-expired' ||
+      location.state.reason === 'auth-required' ||
+      location.state.reason === 'logged-out' ||
+      location.state.reason === 'logged-out-all'
+    )
       ? location.state.reason
       : null;
 
-  const authMessage =
+  const authFeedback =
     routeReason === 'session-expired'
-      ? 'Your session has expired. Please log in again.'
+      ? {
+          message: 'Your session has expired. Please log in again.',
+          className: 'border-amber-200 bg-amber-50 text-amber-800',
+        }
       : routeReason === 'auth-required'
-      ? 'Please log in to continue.'
+      ? {
+          message: 'Please log in to continue.',
+          className: 'border-amber-200 bg-amber-50 text-amber-800',
+        }
+      : routeReason === 'logged-out'
+      ? {
+          message: 'You have been logged out successfully.',
+          className: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+        }
+      : routeReason === 'logged-out-all'
+      ? {
+          message: 'You have been logged out from all sessions.',
+          className: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+        }
       : null;
+
 
   const {
     register,
@@ -72,15 +93,15 @@ export function LoginPage() {
   };
 
   return (
-    <div className="h-full min-h-full flex items-center justify-center bg-gray-50 px-4">
+    <div className="h-full min-h-full flex items-center justify-center bg-gray-50 px-4 text-center">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <h1 className="text-2xl font-semibold mb-6">Log In</h1>
 
-        {authMessage && !globalError && (
-          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            {authMessage}
+        {authFeedback && !globalError && (
+          <div className={`mb-4 rounded-xl border px-4 py-3 text-sm ${authFeedback.className}`}>
+            {authFeedback.message}
           </div>
-        )}  
+        )}
 
         {globalError && (
           <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
