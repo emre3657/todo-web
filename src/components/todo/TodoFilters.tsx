@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { PlusIcon, MinusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon, MinusIcon, XMarkIcon, AdjustmentsVerticalIcon, ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import type { TodoPriorityInput } from '@/features/todos/types';
 import { FocusTrap } from '@/components/ui/FocusTrap';
 
@@ -229,7 +229,7 @@ export function TodoFilters({
                 className="cursor-pointer inline-flex items-center gap-2 rounded-3xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-100"
               >
                 {sortDropdownOpen ? 'Close' : 'Add'}
-                <span className="text-slate-500">{sortDropdownOpen ? '▴' : '▾'}</span>
+                {sortDropdownOpen ? <ChevronDownIcon className='h-3 w-3' /> : <ChevronUpIcon className='h-3 w-3' />}
               </button>
             </div>
 
@@ -298,7 +298,7 @@ export function TodoFilters({
 
   return (
     <>
-      <div className="flex items-center justify-between gap-3 xl:hidden">
+      <div className="flex items-center justify-center gap-3 xl:hidden sm:justify-between">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">Filters</h2>
           <p className="text-sm text-slate-500">Tap to update the current filter selection.</p>
@@ -308,7 +308,8 @@ export function TodoFilters({
           onClick={() => setFiltersOpen(true)}
           className="inline-flex items-center gap-2 rounded-3xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
         >
-          Open filters
+          <AdjustmentsVerticalIcon className="h-4 w-4" />
+          Filters
         </button>
       </div>
 
@@ -339,10 +340,10 @@ export function TodoFilters({
                 <button
                   type="button"
                   onClick={() => setFiltersOpen(false)}
-                  className="rounded-full bg-slate-100 px-3 py-1 text-slate-700 transition hover:bg-slate-200"
+                  className="rounded-full bg-slate-100 px-2 py-2 text-slate-700 transition hover:bg-slate-200"
                   aria-label="Close filters"
                 >
-                  ×
+                  <XMarkIcon className="h-4 w-4" />
                 </button>
               </div>
               {filtersContent}
