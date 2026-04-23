@@ -18,13 +18,13 @@ export function TodosPagination({
   onLimitChange,
 }: TodosPaginationProps) {
   return (
-    <div className="mt-6 flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mt-6 flex flex-col items-center gap-5 rounded-3xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 sm:flex-row sm:items-center sm:justify-between">
       <div className="text-slate-600">
         Page {currentPage} of {totalPages}
         {isFetching && ' • loading...'}
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={onPreviousPage}

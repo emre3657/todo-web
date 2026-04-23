@@ -10,7 +10,7 @@ export function ProtectedRoute() {
       <Navigate
         to="/login"
         replace
-         state={{
+        state={{
           from: location,
           reason: authReason ?? 'auth-required',
         }}

@@ -54,7 +54,7 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="h-full min-h-full flex items-center justify-center bg-gray-50 px-4">
+    <div className="h-full min-h-full flex items-center justify-center bg-gray-50 px-4 text-center">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <h1 className="text-2xl font-semibold mb-6">Register</h1>
 
@@ -72,6 +72,7 @@ export function RegisterPage() {
             <input
               id="username"
               type="text"
+              autoComplete='username'
               {...register('username')}
               className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
@@ -87,6 +88,7 @@ export function RegisterPage() {
             <input
               id="email"
               type="email"
+              autoComplete='email'
               {...register('email')}
               className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
@@ -102,6 +104,7 @@ export function RegisterPage() {
             <input
               id="password"
               type="password"
+              autoComplete='new-password'
               {...register('password')}
               className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />
@@ -117,6 +120,7 @@ export function RegisterPage() {
             <input
               id="repassword"
               type="password"
+              autoComplete='new-password'
               {...register('repassword')}
               className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
             />

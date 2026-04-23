@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import { LandingRoute } from '@/app/routes/LandingRoute';
 import { PublicOnlyRoute } from '@/app/routes/PublicOnlyRoute';
 import { ProtectedRoute } from '@/app/routes/ProtectedRoute';
+import { AppLayout } from '@/app/layouts/AppLayout';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { TodosPage } from '@/pages/TodosPage';
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
     path: '/',
     element: <LandingRoute />,
   },
+
   {
     element: <PublicOnlyRoute />,
     children: [
@@ -25,16 +27,22 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     element: <ProtectedRoute />,
     children: [
       {
-        path: '/todos',
-        element: <TodosPage />,
-      },
-      {
-        path: '/profile',
-        element: <ProfilePage />,
+        element: <AppLayout />,
+        children: [
+          {
+            path: '/todos',
+            element: <TodosPage />,
+          },
+          {
+            path: '/profile',
+            element: <ProfilePage />,
+          },
+        ],
       },
     ],
   },

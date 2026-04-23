@@ -180,7 +180,7 @@ export function TodosPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="text-center mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <TodosHeader
         visibleCount={todos.length}
         isRefreshing={isFetching}
@@ -199,7 +199,7 @@ export function TodosPage() {
       />
 
       <div className="grid gap-6 xl:grid-cols-[320px_minmax(0,1fr)]">
-        <div className="xl:sticky xl:top-6 xl:self-start">
+        <div className="xl:sticky xl:top-[90px] xl:self-start">
           <TodoFilters
             search={search}
             priority={priority}
