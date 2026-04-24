@@ -3,6 +3,7 @@ import { LandingRoute } from '@/app/routes/LandingRoute';
 import { PublicOnlyRoute } from '@/app/routes/PublicOnlyRoute';
 import { ProtectedRoute } from '@/app/routes/ProtectedRoute';
 import { AppLayout } from '@/app/layouts/AppLayout';
+import { LogRegLayout } from '@/app/layouts/LogRegLayout';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { TodosPage } from '@/pages/TodosPage';
@@ -18,13 +19,18 @@ export const router = createBrowserRouter([
     element: <PublicOnlyRoute />,
     children: [
       {
-        path: '/login',
-        element: <LoginPage />,
-      },
-      {
-        path: '/register',
-        element: <RegisterPage />,
-      },
+        element: <LogRegLayout />,
+        children: [
+          {
+            path: '/login',
+            element: <LoginPage />,
+          },
+          {
+            path: '/register',
+            element: <RegisterPage />,
+          },
+        ]
+      }
     ],
   },
 
