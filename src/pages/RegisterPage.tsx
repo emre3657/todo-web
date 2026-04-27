@@ -6,6 +6,7 @@ import type { RegisterInput } from '@/features/auth/schemas';
 import { useRegister } from '@/features/auth/hooks';
 import { registerSchema } from '@/features/auth/schemas';
 import { ApiError } from '@/lib/api-client';
+import { PasswordInput } from '@/components/ui/PasswordInput';
 
 export function RegisterPage() {
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -101,12 +102,11 @@ export function RegisterPage() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
-              autoComplete='new-password'
               {...register('password')}
-              className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+              autoComplete="new-password"
+              className="mt-1 rounded-xl border-gray-300 bg-white focus:border-blue-600 focus:ring-blue-100"
             />
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
@@ -117,12 +117,11 @@ export function RegisterPage() {
             <label htmlFor="repassword" className="block text-sm font-medium text-gray-700">
               Password Again
             </label>
-            <input
+            <PasswordInput
               id="repassword"
-              type="password"
-              autoComplete='new-password'
               {...register('repassword')}
-              className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+              autoComplete="new-password"
+              className="mt-1 rounded-xl border-gray-300 bg-white focus:border-blue-600 focus:ring-blue-100"
             />
             {errors.repassword && (
               <p className="text-red-500 text-xs mt-1">{errors.repassword.message}</p>

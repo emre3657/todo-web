@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Link, useLocation } from 'react-router';
-import { ApiError } from '@/lib/api-client';
-import type { LoginInput } from '@/features/auth/schemas';
+import { PasswordInput } from '@/components/ui/PasswordInput';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useLogin } from '@/features/auth/hooks';
 import { loginSchema } from '@/features/auth/schemas';
+import { ApiError } from '@/lib/api-client';
+import type { LoginInput } from '@/features/auth/schemas';
 
 export function LoginPage() {
   const [globalError, setGlobalError] = useState<string | null>(null);
@@ -130,12 +131,11 @@ export function LoginPage() {
             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
               Password
             </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               {...register('password')}
-              autoComplete='current-password'
-              className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
+              autoComplete="current-password"
+              className="mt-1 rounded-xl border-gray-300 bg-white focus:border-blue-600 focus:ring-blue-100"
             />
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
