@@ -6,15 +6,27 @@ export function ProtectedRoute() {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return (
-      <Navigate
-        to="/login"
-        replace
-        state={{
-          from: location,
-          reason: authReason ?? 'auth-required',
-        }}
-      />
+    if (authReason === 'deleted-account') {
+      return (
+        <Navigate
+          to="/"
+          replace
+          state={{
+            from: location,
+            reason: authReason,
+          }}
+        />
+      )
+    }
+    return (  
+    <Navigate
+      to="/login"
+      replace
+      state={{
+        from: location,
+        reason: authReason ?? 'auth-required',
+      }}
+    />
     );
   }
 

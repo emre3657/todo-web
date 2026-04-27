@@ -20,6 +20,7 @@ interface AuthContextValue {
   | 'session-expired'
   | 'logged-out'
   | 'logged-out-all'
+  | 'deleted-account'
   | null;
   setAuthUser: (user: User | null) => void;
   clearAuth: (
@@ -28,6 +29,7 @@ interface AuthContextValue {
       | 'session-expired'
       | 'logged-out'
       | 'logged-out-all'
+      | 'deleted-account'
       | null
   ) => void;
 }
@@ -39,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthInitialized, setIsAuthInitialized] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [authReason, setAuthReason] = useState<
-    'auth-required' | 'session-expired' | 'logged-out' | 'logged-out-all' | null
+    'auth-required' | 'session-expired' | 'logged-out' | 'logged-out-all' | 'deleted-account' | null
   >(null);
 
   useEffect(() => {
