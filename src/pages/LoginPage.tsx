@@ -21,7 +21,8 @@ export function LoginPage() {
       location.state.reason === 'session-expired' ||
       location.state.reason === 'auth-required' ||
       location.state.reason === 'logged-out' ||
-      location.state.reason === 'logged-out-all'
+      location.state.reason === 'logged-out-all' ||
+      location.state.reason === 'password-reset-success'
     )
       ? location.state.reason
       : null;
@@ -47,8 +48,12 @@ export function LoginPage() {
           message: 'You have been logged out from all sessions.',
           className: 'border-emerald-200 bg-emerald-50 text-emerald-800',
         }
+      : routeReason === 'password-reset-success'
+      ? {
+          message: 'Your password has been reset successfully. Please log in.',
+          className: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+        }
       : null;
-
 
   const {
     register,
@@ -96,7 +101,7 @@ export function LoginPage() {
   return (
     <div className="h-full min-h-full flex items-center justify-center bg-gray-50 px-4 text-center">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-        <h1 className="text-2xl font-semibold mb-6">Log In</h1>
+        <h1 className="text-2xl font-semibold mb-6">Welcome Back</h1>
 
         {authFeedback && !globalError && (
           <div className={`mb-4 rounded-xl border px-4 py-3 text-sm ${authFeedback.className}`}>
@@ -140,6 +145,15 @@ export function LoginPage() {
             {errors.password && (
               <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
             )}
+
+            <div className="mt-2 flex justify-end">
+              <Link
+                to="/forgot-password"
+                className="rounded-xl px-2 py-1 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
+              >
+                Forgot password?
+              </Link>
+            </div>
           </div>
 
           <button

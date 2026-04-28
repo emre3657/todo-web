@@ -57,7 +57,7 @@ export function RegisterPage() {
   return (
     <div className="h-full min-h-full flex items-center justify-center bg-gray-50 px-4 text-center">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
-        <h1 className="text-2xl font-semibold mb-6">Register</h1>
+        <h1 className="text-2xl font-semibold mb-6">Create An Account</h1>
 
         {globalError && (
           <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
