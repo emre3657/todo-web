@@ -2,11 +2,15 @@ import { apiClient } from '@/lib/api-client';
 import type {
   AuthLoginInput,
   AuthRegisterInput,
+  AuthForgotPasswordInput,
+  AuthResetPasswordInput,
   RegisterResponse,
   LoginResponse,
   RefreshResponse,
   LogoutResponse,
   LogoutAllResponse,
+  ForgotPasswordResponse,
+  ResetPasswordResponse,
 } from './types';
 
 export const authApi = {
@@ -19,9 +23,15 @@ export const authApi = {
   refresh: (): Promise<RefreshResponse> =>
     apiClient.post('/auth/refresh', {}),
 
-  logout: (): Promise<LogoutResponse> => 
+  logout: (): Promise<LogoutResponse> =>
     apiClient.post('/auth/logout', {}),
 
-  logoutAll: (): Promise<LogoutAllResponse> => 
+  logoutAll: (): Promise<LogoutAllResponse> =>
     apiClient.post('/auth/logout-all', {}),
+
+  forgotPassword: (data: AuthForgotPasswordInput): Promise<ForgotPasswordResponse> =>
+    apiClient.post('/auth/forgot-password', data),
+
+  resetPassword: (data: AuthResetPasswordInput): Promise<ResetPasswordResponse> =>
+    apiClient.post('/auth/reset-password', data),
 };

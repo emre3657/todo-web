@@ -4,8 +4,12 @@ import { authApi } from './api';
 import type {
   AuthLoginInput,
   AuthRegisterInput,
+  AuthForgotPasswordInput,
+  AuthResetPasswordInput,
   LoginResponse,
   RegisterResponse,
+  ForgotPasswordResponse,
+  ResetPasswordResponse,
 } from './types';
 import { apiClient } from '@/lib/api-client';
 import { useAuth } from './auth-context';
@@ -48,7 +52,7 @@ export const useLogout = () => {
   return useMutation<void, Error, void>({
     mutationFn: () => authApi.logout(),
     onSuccess: () => {
-      clearAuth("logged-out");
+      clearAuth('logged-out');
     },
   });
 };
@@ -59,7 +63,19 @@ export const useLogoutAll = () => {
   return useMutation<void, Error, void>({
     mutationFn: () => authApi.logoutAll(),
     onSuccess: () => {
-      clearAuth("logged-out-all");
+      clearAuth('logged-out-all');
     },
+  });
+};
+
+export const useForgotPassword = () => {
+  return useMutation<ForgotPasswordResponse, Error, AuthForgotPasswordInput>({
+    mutationFn: (data) => authApi.forgotPassword(data),
+  });
+};
+
+export const useResetPassword = () => {
+  return useMutation<ResetPasswordResponse, Error, AuthResetPasswordInput>({
+    mutationFn: (data) => authApi.resetPassword(data),
   });
 };

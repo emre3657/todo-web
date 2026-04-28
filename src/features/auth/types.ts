@@ -1,4 +1,9 @@
-import type { RegisterInput, LoginInput } from './schemas';
+import type {
+  RegisterInput,
+  LoginInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
+} from './schemas';
 
 export interface User {
   id: string;
@@ -10,12 +15,19 @@ export interface AuthResponse {
   accessToken: string;
 }
 
+export interface AuthMessageResponse {
+  message: string;
+}
 
 export type RegisterResponse = AuthResponse;
 export type LoginResponse = AuthResponse;
 export type RefreshResponse = AuthResponse;
 export type LogoutResponse = void;
 export type LogoutAllResponse = void;
+export type ForgotPasswordResponse = AuthMessageResponse;
+export type ResetPasswordResponse = AuthMessageResponse;
 
 export type AuthRegisterInput = RegisterInput;
 export type AuthLoginInput = LoginInput;
+export type AuthForgotPasswordInput = ForgotPasswordInput;
+export type AuthResetPasswordInput = ResetPasswordInput;
